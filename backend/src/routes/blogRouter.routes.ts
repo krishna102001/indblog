@@ -99,8 +99,24 @@ blogRouter.put("/blog/:id", async (c) => {
   }
 });
 
-blogRouter.get("/blog/bulk", (c) => {
-  return c.text("saare blogs bluk me hain");
+blogRouter.get("/blog/bulk", async (c) => {
+  const prisma = new PrismaClient({
+    datasourceUrl: c.env.DATABASE_URL,
+  }).$extends(withAccelerate());
+  const data = await prisma.post.findMany({
+    select: {
+      id: true,
+      title: true,
+      content: true,
+      author: {
+        select: {
+          id: true,
+          name: true,
+        },
+      },
+    },
+  });
+  return c.json({ success: true, posts: data });
 });
 
 blogRouter.get("/blog/:id", (c) => {
