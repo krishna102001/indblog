@@ -151,8 +151,30 @@ blogRouter.get("/blog/:id", async (c) => {
   }
 });
 
-blogRouter.delete("/blog/:id", (c) => {
-  return c.text("blog deleted");
+blogRouter.delete("/blog/:id", async (c) => {
+  const postId = c.req.param("id");
+  const userId = c.get("userId");
+  const prisma = new PrismaClient({
+    datasourceUrl: c.env.DATABASE_URL,
+  }).$extends(withAccelerate());
+  try {
+    const post = await prisma.post.delete({
+      where: {
+        id: postId,
+        authorId: userId,
+      },
+    });
+    if (!post) {
+      return c.json({ success: false, message: "post not found" }, 400);
+    }
+    return c.json({ success: true, message: "successfully deleted post" }, 200);
+  } catch (error) {
+    console.error(error);
+    return c.json(
+      { success: false, message: "failed to deleted the post" },
+      500
+    );
+  }
 });
 
 export default blogRouter;
