@@ -119,8 +119,36 @@ blogRouter.get("/blog/bulk", async (c) => {
   return c.json({ success: true, posts: data });
 });
 
-blogRouter.get("/blog/:id", (c) => {
-  return c.text("blog hain");
+blogRouter.get("/blog/:id", async (c) => {
+  const postId = c.req.param("id");
+  const prisma = new PrismaClient({
+    datasourceUrl: c.env.DATABASE_URL,
+  }).$extends(withAccelerate());
+  try {
+    const post = await prisma.post.findUnique({
+      where: {
+        id: postId,
+      },
+      select: {
+        id: true,
+        title: true,
+        content: true,
+        author: {
+          select: {
+            name: true,
+            id: true,
+          },
+        },
+      },
+    });
+    if (!post) {
+      return c.json({ success: false, message: "no post!!!" }, 400);
+    }
+    return c.json({ success: true, post }, 200);
+  } catch (error) {
+    console.error(error);
+    return c.json({ success: false, message: "failed to get the post" }, 400);
+  }
 });
 
 blogRouter.delete("/blog/:id", (c) => {
