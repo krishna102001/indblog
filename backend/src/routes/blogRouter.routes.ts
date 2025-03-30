@@ -1,5 +1,7 @@
 import { Hono } from "hono";
 import { verify } from "hono/jwt";
+import { PrismaClient } from "@prisma/client/edge";
+import { withAccelerate } from "@prisma/extension-accelerate";
 
 const blogRouter = new Hono<{
   Bindings: {
@@ -28,8 +30,30 @@ blogRouter.use("/*", async (c, next) => {
   }
 });
 
-blogRouter.post("/blog", (c) => {
-  return c.text("added blog");
+blogRouter.post("/blog", async (c) => {
+  const userId = c.get("userId");
+  const prisma = new PrismaClient({
+    datasourceUrl: c.env.DATABASE_URL,
+  }).$extends(withAccelerate());
+
+  const body = await c.req.json();
+  try {
+    const post = await prisma.post.create({
+      data: {
+        title: body.title,
+        content: body.content,
+        published: true,
+        authorId: userId,
+      },
+    });
+    return c.json({ success: true, post: post }, 201);
+  } catch (error) {
+    console.error(error);
+    return c.json(
+      { success: false, message: "failed to publish the post!!" },
+      400
+    );
+  }
 });
 
 blogRouter.put("/blog/:id", (c) => {
