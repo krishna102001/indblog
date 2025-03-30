@@ -1,5 +1,5 @@
 import { Hono } from "hono";
-import { verify } from "hono/jwt";
+import { decode, verify } from "hono/jwt";
 import { PrismaClient } from "@prisma/client/edge";
 import { withAccelerate } from "@prisma/extension-accelerate";
 
@@ -20,6 +20,16 @@ blogRouter.use("/*", async (c, next) => {
     return c.json({ success: false, message: "token not found" }, 400);
   }
   const token = authHeader?.split(" ")[1];
+  const decodeJwt = decode(token);
+  if (Math.floor(Date.now() / 1000) > (decodeJwt.payload.exp || 0)) {
+    return c.json(
+      {
+        success: false,
+        message: "please login again. token expired!!!",
+      },
+      400
+    );
+  }
   const user = await verify(token, c.env.JWT_SECRET);
   // console.log(user);
   if (user && typeof user.id == "string") {
@@ -56,8 +66,37 @@ blogRouter.post("/blog", async (c) => {
   }
 });
 
-blogRouter.put("/blog/:id", (c) => {
-  return c.text("updated blogs");
+blogRouter.put("/blog/:id", async (c) => {
+  const userId = c.get("userId");
+  const postId = c.req.param("id");
+  const prisma = new PrismaClient({
+    datasourceUrl: c.env.DATABASE_URL,
+  }).$extends(withAccelerate());
+  const body = await c.req.json();
+  try {
+    const updatePost = await prisma.post.update({
+      where: {
+        id: postId,
+        authorId: userId,
+      },
+      data: {
+        ...body,
+      },
+    });
+    if (!updatePost) {
+      return c.json(
+        { success: false, message: "failed to update the post" },
+        500
+      );
+    }
+    return c.json({ success: true, message: "updated successfully" });
+  } catch (error) {
+    console.error(error);
+    return c.json(
+      { success: false, message: "failed to update the data" },
+      400
+    );
+  }
 });
 
 blogRouter.get("/blog/bulk", (c) => {
