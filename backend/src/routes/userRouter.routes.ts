@@ -11,16 +11,6 @@ const userRouter = new Hono<{
   };
 }>();
 
-// userRouter.get("/", async (c) => {
-//   const prisma = new PrismaClient({
-//     datasourceUrl: c.env.DATABASE_URL,
-//   }).$extends(withAccelerate());
-
-//   const body = c.body()
-//   const data = await prisma.user.findMany();
-//   return c.text("hello babay");
-// });
-
 userRouter.post("/signup", async (c) => {
   const body = await c.req.json(); // getting req data
   const JWT_SECRET = c.env.JWT_SECRET; // env variable getting
@@ -54,8 +44,38 @@ userRouter.post("/signup", async (c) => {
   }
 });
 
-userRouter.post("/signin", (c) => {
-  return c.text("user sign in");
+userRouter.post("/signin", async (c) => {
+  const body = await c.req.json();
+  const JWT_SECRET = c.env.JWT_SECRET;
+  const prisma = new PrismaClient({
+    datasourceUrl: c.env.DATABASE_URL,
+  }).$extends(withAccelerate());
+
+  try {
+    const data = await prisma.user.findUnique({
+      where: {
+        email: body.email,
+      },
+    });
+    if (!data) {
+      return c.json({ success: false, message: "not found user!!" }, 403);
+    }
+    const isMatchPaswword = await bcrypt.compare(body.password, data.password);
+    if (!isMatchPaswword) {
+      return c.json({ success: false, message: "incorrect password" }, 400);
+    }
+    const payload = {
+      id: data.id,
+      name: data.name,
+      email: data.email,
+      exp: Math.floor(Date.now() / 1000) + 60 * 5,
+    };
+    const token = await sign(payload, JWT_SECRET);
+    return c.json({ success: true, jwt_token: token }, 200);
+  } catch (error) {
+    console.error(error);
+    return c.json({ success: false, message: "failed to sign in" }, 400);
+  }
 });
 
 export default userRouter;
