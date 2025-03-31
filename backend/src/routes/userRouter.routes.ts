@@ -3,6 +3,7 @@ import { PrismaClient } from "@prisma/client/edge";
 import { withAccelerate } from "@prisma/extension-accelerate";
 import { sign } from "hono/jwt";
 import bcrypt from "bcryptjs";
+import { signinInput, signupInput } from "@krishnakantmaurya/indblog-common";
 
 const userRouter = new Hono<{
   Bindings: {
@@ -17,6 +18,11 @@ userRouter.post("/signup", async (c) => {
   const prisma = new PrismaClient({
     datasourceUrl: c.env.DATABASE_URL,
   }).$extends(withAccelerate());
+
+  const { success } = signupInput.safeParse(body);
+  if (!success) {
+    return c.json({ success: false, message: "input are incorrect" }, 400);
+  }
 
   try {
     const hashPassword = await bcrypt.hash(body.password, 10);
@@ -50,7 +56,10 @@ userRouter.post("/signin", async (c) => {
   const prisma = new PrismaClient({
     datasourceUrl: c.env.DATABASE_URL,
   }).$extends(withAccelerate());
-
+  const { success } = signinInput.safeParse(body);
+  if (!success) {
+    return c.json({ success: false, message: "input are not correct" }, 400);
+  }
   try {
     const data = await prisma.user.findUnique({
       where: {
