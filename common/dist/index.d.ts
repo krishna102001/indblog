@@ -42,7 +42,7 @@ export declare const blogUpdateInput: z.ZodObject<{
     title?: string | undefined;
     content?: string | undefined;
 }>;
-export type signupInput = z.infer<typeof signupInput>;
+export type signupType = z.infer<typeof signupInput>;
 export type signinType = z.infer<typeof signinInput>;
 export type blogCreateType = z.infer<typeof blogCreateInput>;
 export type blogUpdateType = z.infer<typeof blogUpdateInput>;
