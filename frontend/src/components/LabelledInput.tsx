@@ -13,6 +13,7 @@ const LabelledInput = ({
   type,
   placeholder,
   onChange,
+  value,
 }: LabelledInputType) => {
   return (
     <div className='flex flex-col my-4'>
@@ -26,6 +27,7 @@ const LabelledInput = ({
       <input
         id='input-field'
         type={type || "text"}
+        value={value}
         placeholder={placeholder}
         onChange={onChange}
         className='bg-gray-50 border border-[#ff7000] text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5'
