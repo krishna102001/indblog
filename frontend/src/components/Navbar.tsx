@@ -15,18 +15,13 @@ const Navbar = () => {
           </span>
         </Link>
       </div>
-      <div className='flex items-center sm:gap-4 gap-2'>
+      <div className='flex items-center sm:gap-4 gap-2 font-extralight'>
         <Link to='/'>
-          <p className='cursor-pointer text-lg'>Home</p>
+          <p className='cursor-pointer text-md mr-4'>Home</p>
         </Link>
         <Link to='/signin'>
-          <p className='cursor-pointer bg-[#ff4f01] p-1 px-2 rounded-lg text-white sm:tracking-wider shadow-sm shadow-blue-700 hover:shadow-blue-800 hover:shadow-md'>
-            Sign in
-          </p>
-        </Link>
-        <Link to='/signup'>
-          <p className='cursor-pointer bg-blue-600 p-1 px-2 rounded-lg text-white sm:tracking-wider shadow-sm shadow-blue-700 hover:shadow-[#ff4f01] hover:shadow-md'>
-            Register
+          <p className='cursor-pointer bg-[#ff4f01] p-2 px-4 rounded-full text-white text-sm sm:tracking-wider shadow-sm shadow-blue-700 hover:shadow-blue-800 hover:shadow-md'>
+            Get Started
           </p>
         </Link>
       </div>
