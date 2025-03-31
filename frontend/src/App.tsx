@@ -1,7 +1,32 @@
+import { BrowserRouter, Route, Routes } from "react-router-dom";
+import Layout from "./layout/Layout";
+import Signin from "./pages/Signin";
+import Home from "./pages/Home";
+
 function App() {
   return (
     <>
-      <div className='bg-red-500'>Hello from Ind Blog</div>
+      <BrowserRouter>
+        <Routes>
+          <Route
+            path='/'
+            element={
+              <Layout>
+                <Home />
+              </Layout>
+            }
+          />
+          <Route
+            path='/signin'
+            element={
+              <Layout>
+                <Signin />
+              </Layout>
+            }
+          />
+          {/* <Route path='/signup' element={} /> */}
+        </Routes>
+      </BrowserRouter>
     </>
   );
 }
