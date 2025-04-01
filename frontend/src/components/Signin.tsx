@@ -4,12 +4,17 @@ import { signinType } from "@krishnakantmaurya/indblog-common";
 import axios, { AxiosError } from "axios";
 import { backend_url } from "../config";
 import { toast } from "react-toastify";
+import { jwtDecode } from "jwt-decode";
+import { useAppContext } from "../context/AppContext";
+import { useNavigate } from "react-router-dom";
 
 const Signin = () => {
   const [signInInput, setSignInInput] = useState<signinType>({
     email: "",
     password: "",
   });
+  const { setUserData } = useAppContext();
+  const navigate = useNavigate();
 
   async function handleSubmit() {
     try {
@@ -20,6 +25,14 @@ const Signin = () => {
       if (data.success) {
         setSignInInput({ email: "", password: "" });
         toast.success("Login Successfully!!");
+        localStorage.setItem("token", data.jwt_token);
+        if (data.jwt_token) {
+          const user: { name: string; email: string } = jwtDecode(
+            data.jwt_token
+          );
+          setUserData(user);
+          navigate("/blogs");
+        }
       }
       console.log(data);
     } catch (error: unknown) {

@@ -4,6 +4,9 @@ import { signupType } from "@krishnakantmaurya/indblog-common";
 import axios, { AxiosError } from "axios";
 import { backend_url } from "../config";
 import { toast } from "react-toastify";
+import { jwtDecode } from "jwt-decode";
+import { useAppContext } from "../context/AppContext";
+import { useNavigate } from "react-router-dom";
 
 const Signup = () => {
   const [signUpInput, setSignUpInput] = useState<signupType>({
@@ -11,6 +14,8 @@ const Signup = () => {
     email: "",
     password: "",
   });
+  const { setUserData } = useAppContext();
+  const navigate = useNavigate();
   async function handleSubmit() {
     try {
       const { data } = await axios.post(
@@ -20,6 +25,12 @@ const Signup = () => {
       if (data.success) {
         toast.success("Registered Successfully!!");
         setSignUpInput({ name: "", email: "", password: "" });
+        localStorage.setItem("token", data.jwt_token);
+        if (data.token) {
+          const user: signupType = jwtDecode(data.jwt_token);
+          setUserData(user);
+          navigate("/blogs");
+        }
       }
       console.log(data);
     } catch (err: unknown) {
