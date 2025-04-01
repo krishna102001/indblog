@@ -7,11 +7,13 @@ import { useAppContext } from "./context/AppContext";
 import NotFoundPage from "./pages/NotFoundPage";
 import AddBlog from "./pages/AddBlog";
 import ViewBlog from "./pages/ViewBlog";
+import { Analytics } from "@vercel/analytics/react";
 
 function App() {
   const { userData } = useAppContext();
   return (
     <>
+      <Analytics />
       <BrowserRouter>
         <Routes>
           <Route
