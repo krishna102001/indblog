@@ -20,7 +20,7 @@ const Navbar = () => {
     <div className='flex justify-between p-4 sm:px-10 bg-gray-200 shadow-md shadow-gray-300'>
       <div className='flex items-center'>
         <img
-          src='ib.png'
+          src='/ib.png'
           alt='ind-blog-logo'
           className='sm:w-10 sm:h-10 w-6 h-6'
         />
