@@ -1,4 +1,16 @@
+import { useNavigate } from "react-router-dom";
+import { useAppContext } from "../context/AppContext";
+
 const Home = () => {
+  const { userData } = useAppContext();
+  const navigate = useNavigate();
+  const handleClick = () => {
+    if (userData) {
+      navigate("/blogs");
+    } else {
+      navigate("/signin");
+    }
+  };
   return (
     <div className='grid grid-cols-1 sm:grid-cols-3'>
       <div className='m-10 mt-20 sm:ml-32 sm:mt-32 col-span-2 '>
@@ -15,7 +27,10 @@ const Home = () => {
         <p className='mt-8 text-xl sm:text-2xl font-light'>
           A perfect place to read, write and share your thoughts
         </p>
-        <p className='bg-gray-900 rounded-full text-[#ff7002] max-w-max p-2 px-6 mt-7 hover:shadow-md hover:shadow-orange-500 hover:text-[#f59347]'>
+        <p
+          className='bg-gray-900 rounded-full text-[#ff7002] max-w-max p-2 px-6 mt-7 hover:shadow-md hover:shadow-orange-500 hover:text-[#f59347]'
+          onClick={handleClick}
+        >
           Start Writing
         </p>
       </div>
