@@ -8,10 +8,10 @@ import { toast } from "react-toastify";
 
 const AddBlog = () => {
   const [blog, setBlog] = useState<blogCreateType>({ title: "", content: "" });
-  const editorRef = useRef(null);
-  const quillRef = useRef(null);
+  const editorRef = useRef<HTMLDivElement | null>(null);
+  const quillRef = useRef<Quill>(null);
   useEffect(() => {
-    if (!quillRef.current) {
+    if (editorRef.current && !quillRef.current) {
       quillRef.current = new Quill(editorRef.current, {
         theme: "snow",
         modules: {
@@ -25,11 +25,10 @@ const AddBlog = () => {
       });
     }
   }, []);
-
   const handlerSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     try {
-      const content = quillRef.current.root.innerHTML;
+      const content = quillRef.current?.root.innerHTML;
       const { data } = await axios.post(
         `${backend_url}/api/v1/blog`,
         { ...blog, content },
@@ -40,7 +39,9 @@ const AddBlog = () => {
       if (data.success) {
         toast.success("Blog Published Successfully");
         setBlog({ title: "", content: "" });
-        quillRef.current.root.innerHTML = "";
+        if (quillRef.current) {
+          quillRef.current.root.innerHTML = "";
+        }
       }
     } catch (error: unknown) {
       if (error instanceof AxiosError) {
