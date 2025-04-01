@@ -4,6 +4,7 @@ import Home from "./pages/Home";
 import Auth from "./pages/Auth";
 import Blogs from "./pages/Blogs";
 import { useAppContext } from "./context/AppContext";
+import NotFoundPage from "./pages/NotFoundPage";
 
 function App() {
   const { userData } = useAppContext();
@@ -39,6 +40,14 @@ function App() {
               />
             </>
           )}
+          <Route
+            path='/*'
+            element={
+              <Layout>
+                <NotFoundPage />
+              </Layout>
+            }
+          />
         </Routes>
       </BrowserRouter>
     </>
