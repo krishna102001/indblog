@@ -14,9 +14,11 @@ const Signup = () => {
     email: "",
     password: "",
   });
+  const [isLoading, setIsLoading] = useState(false);
   const { setUserData } = useAppContext();
   const navigate = useNavigate();
   async function handleSubmit() {
+    setIsLoading(true);
     try {
       const { data } = await axios.post(
         `${backend_url}/api/v1/user/signup`,
@@ -29,11 +31,13 @@ const Signup = () => {
         if (data.token) {
           const user: signupType = jwtDecode(data.jwt_token);
           setUserData(user);
+          setIsLoading(false);
           navigate("/blogs");
         }
       }
       console.log(data);
     } catch (err: unknown) {
+      setIsLoading(false);
       if (err instanceof AxiosError) {
         toast.error(err?.response?.data?.message || err.message);
       }
@@ -67,7 +71,10 @@ const Signup = () => {
         }
       />
       <button
-        className='text-gray-100 bg-gradient-to-r from-[#ff1600] to-[#ff7002] p-2 px-4 rounded-full shadow-md hover:shadow-[#ff6900] mt-1'
+        disabled={isLoading}
+        className={`text-gray-100 bg-gradient-to-r from-[#ff1600] to-[#ff7002] p-2 px-4 rounded-full shadow-md hover:shadow-[#ff6900] mt-1 ${
+          isLoading && "text-gray-900"
+        }`}
         onClick={handleSubmit}
       >
         Register
