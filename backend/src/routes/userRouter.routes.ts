@@ -40,7 +40,7 @@ userRouter.post("/signup", async (c) => {
     });
     const payload = {
       ...data,
-      exp: Math.floor(Date.now() / 1000) + 60 * 5,
+      exp: Math.floor(Date.now() / 1000) + 60 * 60 * 24,
     };
     const token = await sign(payload, JWT_SECRET); // jwt signing
     return c.json({ success: true, jwt_token: token }, 201);
@@ -77,7 +77,7 @@ userRouter.post("/signin", async (c) => {
       id: data.id,
       name: data.name,
       email: data.email,
-      exp: Math.floor(Date.now() / 1000) + 60 * 5,
+      exp: Math.floor(Date.now() / 1000) + 60 * 60 * 24,
     };
     const token = await sign(payload, JWT_SECRET);
     return c.json({ success: true, jwt_token: token }, 200);
