@@ -2,8 +2,11 @@ import { BrowserRouter, Route, Routes } from "react-router-dom";
 import Layout from "./layout/Layout";
 import Home from "./pages/Home";
 import Auth from "./pages/Auth";
+import Blogs from "./pages/Blogs";
+import { useAppContext } from "./context/AppContext";
 
 function App() {
+  const { userData } = useAppContext();
   return (
     <>
       <BrowserRouter>
@@ -24,6 +27,18 @@ function App() {
               </Layout>
             }
           />
+          {userData && (
+            <>
+              <Route
+                path='/blogs'
+                element={
+                  <Layout>
+                    <Blogs />
+                  </Layout>
+                }
+              />
+            </>
+          )}
         </Routes>
       </BrowserRouter>
     </>
