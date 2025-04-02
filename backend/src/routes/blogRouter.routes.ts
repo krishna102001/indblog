@@ -17,6 +17,7 @@ const blogRouter = new Hono<{
     CLOUDINARY_API_KEY: string;
     CLOUDINARY_API_SECRET: string;
     CLOUDINARY_CLOUD_NAME: string;
+    OPEN_AI_KEY: string;
   };
   Variables: {
     userId: string;
@@ -78,6 +79,25 @@ blogRouter.post("/blog", async (c) => {
     content: String(formData.get("content")),
     image: result.url,
   };
+
+  // quota limit excceded 🥺😭
+  // const client = new OpenAI({ apiKey: c.env.OPEN_AI_KEY });
+  // const response = await client.responses.create({
+  //   model: "gpt-4o-mini",
+  //   input: [
+  //     {
+  //       role: "assistant",
+  //       content:
+  //         "you will get a blog content in html format. you have to summarise the content and add below them a summary part which have given",
+  //     },
+  //     {
+  //       role: "user",
+  //       content: body.content,
+  //     },
+  //   ],
+  // });
+
+  // body.content = response.output_text;
 
   const { success, error } = blogCreateInput.safeParse(body);
   if (!success) {
@@ -195,6 +215,29 @@ blogRouter.get("/blog/:id", async (c) => {
   } catch (error) {
     console.error(error);
     return c.json({ success: false, message: "failed to get the post" }, 400);
+  }
+});
+
+blogRouter.get("/blog/user/all/:id", async (c) => {
+  const userId = c.req.param("id");
+  const prisma = new PrismaClient({
+    datasourceUrl: c.env.DATABASE_URL,
+  }).$extends(withAccelerate());
+  try {
+    const posts = await prisma.user.findUnique({
+      where: {
+        id: userId,
+      },
+      select: {
+        id: true,
+        name: true,
+        posts: true,
+      },
+    });
+    return c.json({ success: true, posts });
+  } catch (error) {
+    console.error(error);
+    return c.json({ success: false, message: "failed to get the post" });
   }
 });
 
