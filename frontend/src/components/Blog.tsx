@@ -26,9 +26,14 @@ const Blog = ({ id, name, title, content, image, created_at }: BlogDetails) => {
         <div className='sm:col-span-2'>
           <div>
             <h1 className='text-3xl font-semibold text-gray-900'>{title}</h1>
-            <BlogProfile name={name} created_at={created_at} timeRead={5} />
+            <BlogProfile
+              name={name}
+              created_at={created_at}
+              timeRead={5}
+              id={id}
+            />
             <div
-              className='mt-1'
+              className='mt-1 text-justify mr-1'
               dangerouslySetInnerHTML={{ __html: extract(content) }}
             />
           </div>

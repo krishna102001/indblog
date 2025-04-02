@@ -64,6 +64,7 @@ const ViewBlog = () => {
             name={blog?.author.name || ""}
             created_at={blog?.created_at || ""}
             timeRead={5}
+            id={blog?.id || ""}
           />
         </div>
         <div className='flex flex-col justify-center items-center border-t'>
