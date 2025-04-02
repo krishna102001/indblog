@@ -14,11 +14,12 @@ datasource db {
 }
 
 model User {
-  id       String @id @default(uuid())
-  email    String @unique
-  name     String
-  password String
-  posts    Post[]
+  id        String      @id @default(uuid())
+  email     String      @unique
+  name      String
+  password  String
+  posts     Post[]
+  Post_Like Post_Like[]
 }
 
 model Post {
@@ -35,7 +36,10 @@ model Post {
 
 model Post_Like {
   id     Int    @id @default(autoincrement())
-  like   Int
   postId String
   post   Post   @relation(fields: [postId], references: [id])
+  userId String
+  user   User   @relation(fields: [userId], references: [id])
+
+  @@unique([userId, postId])
 }

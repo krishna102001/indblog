@@ -287,4 +287,49 @@ blogRouter.post("/blog/image-upload", async (c) => {
   }
 });
 
+blogRouter.post("/blog/like/:id", async (c) => {
+  const prisma = new PrismaClient({
+    datasourceUrl: c.env.DATABASE_URL,
+  }).$extends(withAccelerate());
+  const blogId = c.req.param("id");
+  const userId = c.get("userId");
+  try {
+    const exisitingLike = await prisma.post_Like.findUnique({
+      where: {
+        userId_postId: {
+          userId,
+          postId: blogId,
+        },
+      },
+    });
+    if (!exisitingLike) {
+      await prisma.post_Like.create({
+        data: {
+          postId: blogId,
+          userId: userId,
+        },
+      });
+    } else {
+      await prisma.post_Like.delete({
+        where: {
+          id: exisitingLike.id,
+        },
+      });
+    }
+    const data = await prisma.post_Like.count({
+      where: {
+        postId: blogId,
+      },
+    });
+    return c.json({
+      success: true,
+      message: exisitingLike ? "Unlike" : "like",
+      totalLike: data,
+    });
+  } catch (error) {
+    console.error(error);
+    return c.json({ success: false, message: "failed to like the post" });
+  }
+});
+
 export default blogRouter;
