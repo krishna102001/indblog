@@ -35,6 +35,12 @@ const ViewBlog = () => {
         console.error(err);
       });
   }, [params.id]);
+
+  useEffect(() => {
+    if (blog != undefined) {
+      document.title = blog?.title || "";
+    }
+  }, [blog, blog?.title]);
   if (isLoading) {
     return (
       <div>

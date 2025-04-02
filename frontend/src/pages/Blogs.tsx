@@ -20,6 +20,7 @@ interface Blogs {
 const Blogs = () => {
   const [blogs, setBlogs] = useState<Blogs[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  document.title = "All Blogs";
   useEffect(() => {
     axios
       .get(`${backend_url}/api/v1/blog/bulk`, {

@@ -4,6 +4,7 @@ import { useAppContext } from "../context/AppContext";
 const Home = () => {
   const { userData } = useAppContext();
   const navigate = useNavigate();
+  document.title = "Ind Blog";
   const handleClick = () => {
     if (userData) {
       navigate("/blogs");
