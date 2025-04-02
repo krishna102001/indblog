@@ -6,10 +6,11 @@ import BlogProfile from "./BlogProfile";
 interface Author {
   name: string;
   id: string;
+  created_at: string;
 }
 type BlogDetails = Author & blogCreateType;
 
-const Blog = ({ id, name, title, content }: BlogDetails) => {
+const Blog = ({ id, name, title, content, image, created_at }: BlogDetails) => {
   const navigate = useNavigate();
   const extract = (htmlContent: string) => {
     const text = DOMPurify.sanitize(htmlContent, { ALLOWED_TAGS: [] });
@@ -21,13 +22,20 @@ const Blog = ({ id, name, title, content }: BlogDetails) => {
       id={id}
       onClick={() => navigate(`/view/blog/${id}`)}
     >
-      <BlogProfile name={name} />
-      <div>
-        <h1 className='text-3xl font-semibold text-gray-900'>{title}</h1>
-        <div
-          className='mt-1'
-          dangerouslySetInnerHTML={{ __html: extract(content) }}
-        />
+      <div className='grid grid-cols-1 sm:grid-cols-3'>
+        <div className='sm:col-span-2'>
+          <div>
+            <h1 className='text-3xl font-semibold text-gray-900'>{title}</h1>
+            <BlogProfile name={name} created_at={created_at} timeRead={5} />
+            <div
+              className='mt-1'
+              dangerouslySetInnerHTML={{ __html: extract(content) }}
+            />
+          </div>
+        </div>
+        <div className=''>
+          <img src={image} className='sm:w-full sm:h-full' />
+        </div>
       </div>
       <div className='w-full h-[1px] bg-gray-100 my-2'></div>
     </div>

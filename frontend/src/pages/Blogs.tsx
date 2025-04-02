@@ -15,6 +15,8 @@ interface Blogs {
   title: string;
   content: string;
   author: Author;
+  image: string;
+  created_at: string;
 }
 
 const Blogs = () => {
@@ -61,6 +63,8 @@ const Blogs = () => {
             name={blog.author.name}
             title={blog.title}
             content={blog.content}
+            image={blog.image}
+            created_at={blog.created_at}
           />
         ))}
       </div>
