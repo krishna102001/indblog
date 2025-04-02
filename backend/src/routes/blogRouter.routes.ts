@@ -6,14 +6,19 @@ import {
   blogCreateInput,
   blogUpdateInput,
 } from "@krishnakantmaurya/indblog-common";
+import { encodeBase64 } from "hono/utils/encode";
 
 const blogRouter = new Hono<{
   Bindings: {
     DATABASE_URL: string;
     JWT_SECRET: string;
+    CLOUDINARY_API_KEY: string;
+    CLOUDINARY_API_SECRET: string;
+    CLOUDINARY_CLOUD_NAME: string;
   };
   Variables: {
     userId: string;
+    cloudinaryConfig: string;
   };
 }>();
 
@@ -187,6 +192,49 @@ blogRouter.delete("/blog/:id", async (c) => {
     return c.json(
       { success: false, message: "failed to deleted the post" },
       500
+    );
+  }
+});
+
+blogRouter.use(async (c, next) => {
+  const cloudName = c.env.CLOUDINARY_CLOUD_NAME;
+  const apiKey = c.env.CLOUDINARY_API_KEY;
+  const apiSecret = c.env.CLOUDINARY_API_SECRET;
+  c.set("cloudinaryConfig", JSON.stringify({ cloudName, apiKey, apiSecret }));
+  await next();
+});
+
+blogRouter.post("/blog/image-upload", async (c) => {
+  const body = await c.req.formData();
+  const image = body.get("image");
+  try {
+    if (image instanceof File) {
+      const byteArrayBuffer = await image.arrayBuffer();
+      const base64 = encodeBase64(byteArrayBuffer);
+      const cloudinaryConfig = JSON.parse(c.get("cloudinaryConfig"));
+      const { cloudName, apiKey, apiSecret } = cloudinaryConfig;
+      const formData = new FormData();
+      formData.append("file", `data:image/png;base64,${base64}`);
+      formData.append("upload_preset", "indblog");
+      const response = await fetch(
+        `https://api.cloudinary.com/v1_1/${cloudName}/upload`,
+        {
+          method: "POST",
+          headers: {
+            Authorization: `Basic ${btoa(apiKey + ":" + apiSecret)}`,
+          },
+          body: formData,
+        }
+      );
+
+      const result: any = await response.json();
+      // console.log(result);
+      return c.json({ success: true, url: result.url }, 201);
+    }
+  } catch (error) {
+    return c.json(
+      { status: false, message: "Failed to upload the photo" },
+      400
     );
   }
 });
