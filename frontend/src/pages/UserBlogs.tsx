@@ -21,6 +21,9 @@ export interface UserBlogsInterface {
 const UserBlogs = () => {
   const [posts, setPosts] = useState<UserBlogsInterface[]>([]);
   const param = useParams();
+
+  document.title = "Your Blogs";
+
   useEffect(() => {
     axios
       .get(`${backend_url}/api/v1/blog/user/all/${param.id}`, {
