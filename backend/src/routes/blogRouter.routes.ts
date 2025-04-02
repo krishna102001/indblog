@@ -4,9 +4,11 @@ import { PrismaClient } from "@prisma/client/edge";
 import { withAccelerate } from "@prisma/extension-accelerate";
 import {
   blogCreateInput,
+  blogCreateType,
   blogUpdateInput,
 } from "@krishnakantmaurya/indblog-common";
 import { encodeBase64 } from "hono/utils/encode";
+import { cloudinaryUploadImage } from "../utils/cloudinary-upload";
 
 const blogRouter = new Hono<{
   Bindings: {
@@ -42,6 +44,12 @@ blogRouter.use("/*", async (c, next) => {
   const user = await verify(token, c.env.JWT_SECRET);
   // console.log(user);
   if (user && typeof user.id == "string") {
+    //cloudinary setup
+    const cloudName = c.env.CLOUDINARY_CLOUD_NAME;
+    const apiKey = c.env.CLOUDINARY_API_KEY;
+    const apiSecret = c.env.CLOUDINARY_API_SECRET;
+
+    c.set("cloudinaryConfig", JSON.stringify({ cloudName, apiKey, apiSecret }));
     c.set("userId", user.id);
     await next();
   } else {
@@ -55,10 +63,25 @@ blogRouter.post("/blog", async (c) => {
     datasourceUrl: c.env.DATABASE_URL,
   }).$extends(withAccelerate());
 
-  const body = await c.req.json();
+  const formData = await c.req.formData();
+  const image = formData.get("image");
+  let result;
+  if (image instanceof File) {
+    const imageArrayBuffer = await image.arrayBuffer();
+    const base64 = encodeBase64(imageArrayBuffer);
+    const cloudinaryConfig = JSON.parse(c.get("cloudinaryConfig"));
+    result = await cloudinaryUploadImage(cloudinaryConfig, base64);
+  }
 
-  const { success } = blogCreateInput.safeParse(body);
+  const body = {
+    title: String(formData.get("title")),
+    content: String(formData.get("content")),
+    image: result.url,
+  };
+
+  const { success, error } = blogCreateInput.safeParse(body);
   if (!success) {
+    console.error(error);
     return c.json({ success: false, message: "incorrect inputs" }, 400);
   }
   try {
@@ -66,6 +89,7 @@ blogRouter.post("/blog", async (c) => {
       data: {
         title: body.title,
         content: body.content,
+        image: body.image,
         published: true,
         authorId: userId,
       },
@@ -196,14 +220,6 @@ blogRouter.delete("/blog/:id", async (c) => {
   }
 });
 
-blogRouter.use(async (c, next) => {
-  const cloudName = c.env.CLOUDINARY_CLOUD_NAME;
-  const apiKey = c.env.CLOUDINARY_API_KEY;
-  const apiSecret = c.env.CLOUDINARY_API_SECRET;
-  c.set("cloudinaryConfig", JSON.stringify({ cloudName, apiKey, apiSecret }));
-  await next();
-});
-
 blogRouter.post("/blog/image-upload", async (c) => {
   const body = await c.req.formData();
   const image = body.get("image");
@@ -212,22 +228,7 @@ blogRouter.post("/blog/image-upload", async (c) => {
       const byteArrayBuffer = await image.arrayBuffer();
       const base64 = encodeBase64(byteArrayBuffer);
       const cloudinaryConfig = JSON.parse(c.get("cloudinaryConfig"));
-      const { cloudName, apiKey, apiSecret } = cloudinaryConfig;
-      const formData = new FormData();
-      formData.append("file", `data:image/png;base64,${base64}`);
-      formData.append("upload_preset", "indblog");
-      const response = await fetch(
-        `https://api.cloudinary.com/v1_1/${cloudName}/upload`,
-        {
-          method: "POST",
-          headers: {
-            Authorization: `Basic ${btoa(apiKey + ":" + apiSecret)}`,
-          },
-          body: formData,
-        }
-      );
-
-      const result: any = await response.json();
+      const result = await cloudinaryUploadImage(cloudinaryConfig, base64);
       // console.log(result);
       return c.json({ success: true, url: result.url }, 201);
     }
