@@ -17,7 +17,7 @@ const Home = () => {
       <div className='m-10 mt-20 sm:ml-32 sm:mt-32 col-span-2 '>
         <div className='relative inline-block p-[2px] text-sm ml-2 rounded-full bg-gradient-to-r from-blue-500 to-purple-500'>
           <p className='bg-gray-100 rounded-full px-2 py-1 font-extralight text-black'>
-            ✨ AI Enhanced Summary
+            ✨ Best Place to Share Thoughts
           </p>
         </div>
 
