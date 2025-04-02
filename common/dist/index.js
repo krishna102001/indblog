@@ -14,6 +14,7 @@ exports.signinInput = zod_1.z.object({
 exports.blogCreateInput = zod_1.z.object({
     title: (0, zod_1.string)(),
     content: (0, zod_1.string)(),
+    image: (0, zod_1.string)().optional(),
 });
 exports.blogUpdateInput = zod_1.z.object({
     title: (0, zod_1.string)().optional(),

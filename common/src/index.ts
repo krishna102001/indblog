@@ -14,6 +14,7 @@ export const signinInput = z.object({
 export const blogCreateInput = z.object({
   title: string(),
   content: string(),
+  image: string().optional(),
 });
 
 export const blogUpdateInput = z.object({
