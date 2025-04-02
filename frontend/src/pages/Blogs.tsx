@@ -50,9 +50,11 @@ const Blogs = () => {
     );
   }
   return (
-    <div className=' flex flex-col-reverse sm:grid sm:grid-cols-3 m-2'>
+    <div className='grid sm:grid-cols-3 m-2'>
       <div className='col-span-2 m-4 sm:ml-20'>
-        <h1 className='text-5xl tracking-wider font-bold mb-4'>All Post</h1>
+        <h1 className='text-5xl tracking-wider font-bold mb-4 underline'>
+          All Blogs
+        </h1>
         {blogs.map((blog) => (
           <Blog
             key={blog.id}
@@ -62,17 +64,6 @@ const Blogs = () => {
             content={blog.content}
           />
         ))}
-      </div>
-      <div className='flex  sm:flex-col items-end  m-4 mb-0 sm:mr-10'>
-        <h1 className='invisible sm:visible text-lg sm:text-2xl font-semibold'>
-          Want To Create Your Own Post
-        </h1>
-        <p
-          className='bg-green-600 p-2 text-sm sm:px-4 mt-2 max-w-sm rounded-xl text-gray-200 hover:text-white shadow-md shadow-green-400 hover:shadow-xl hover:shadow-green-400'
-          onClick={() => navigate("/create/blog")}
-        >
-          New +
-        </p>
       </div>
     </div>
   );
