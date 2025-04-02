@@ -42,7 +42,7 @@ const Navbar = () => {
                     className='w-4 h-4'
                   />
                   <p className='hover:underline hover:text-[#ff7002] cursor-pointer'>
-                    Read Blogs
+                    Read
                   </p>
                 </div>
               </Link>
