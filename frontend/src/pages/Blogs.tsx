@@ -3,7 +3,6 @@ import Blog from "../components/Blog";
 import axios from "axios";
 import { backend_url } from "../config";
 import BlogSkeleton from "../components/skeleton/BlogSkeleton";
-import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 
 interface Author {
@@ -21,7 +20,6 @@ interface Blogs {
 const Blogs = () => {
   const [blogs, setBlogs] = useState<Blogs[]>([]);
   const [isLoading, setIsLoading] = useState(true);
-  const navigate = useNavigate();
   useEffect(() => {
     axios
       .get(`${backend_url}/api/v1/blog/bulk`, {
