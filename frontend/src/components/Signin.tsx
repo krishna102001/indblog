@@ -30,7 +30,7 @@ const Signin = () => {
         toast.success("Login Successfully!!");
         localStorage.setItem("token", data.jwt_token);
         if (data.jwt_token) {
-          const user: { name: string; email: string } = jwtDecode(
+          const user: { name: string; email: string; id: string } = jwtDecode(
             data.jwt_token
           );
           setUserData(user);

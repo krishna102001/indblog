@@ -3,6 +3,7 @@ import React, { createContext, useContext, useEffect, useState } from "react";
 interface UserData {
   name: string;
   email: string;
+  id: string;
 }
 type AppContext = {
   userData: UserData | undefined;
