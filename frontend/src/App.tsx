@@ -7,6 +7,7 @@ import { useAppContext } from "./context/AppContext";
 import NotFoundPage from "./pages/NotFoundPage";
 import AddBlog from "./pages/AddBlog";
 import ViewBlog from "./pages/ViewBlog";
+import UserBlogs from "./pages/UserBlogs";
 
 function App() {
   const { userData } = useAppContext();
@@ -53,6 +54,14 @@ function App() {
                 element={
                   <Layout>
                     <ViewBlog />
+                  </Layout>
+                }
+              />
+              <Route
+                path='/your-blog/view/all/:id'
+                element={
+                  <Layout>
+                    <UserBlogs />
                   </Layout>
                 }
               />
