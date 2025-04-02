@@ -11,6 +11,7 @@ const AddBlog = () => {
   const [file, setFile] = useState<File | undefined>();
   const editorRef = useRef<HTMLDivElement | null>(null);
   const quillRef = useRef<Quill>(null);
+  const fileRef = useRef<HTMLInputElement>(null);
   const imageHandler = () => {
     const input = document.createElement("input");
     input.setAttribute("type", "file");
@@ -96,6 +97,9 @@ const AddBlog = () => {
         toast.success("Blog Published Successfully");
         setBlog({ title: "", content: "" });
         setFile(undefined);
+        if (fileRef.current) {
+          fileRef.current.value = "";
+        }
         if (quillRef.current) {
           quillRef.current.root.innerHTML = "";
         }
@@ -136,6 +140,7 @@ const AddBlog = () => {
               className='block w-full text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50 focus:outline-none p-2.5'
               id='file_input'
               type='file'
+              ref={fileRef}
               onChange={(e) => {
                 if (e.target.files) {
                   setFile(e.target?.files[0]);
