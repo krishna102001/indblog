@@ -10,17 +10,59 @@ const AddBlog = () => {
   const [blog, setBlog] = useState<blogCreateType>({ title: "", content: "" });
   const editorRef = useRef<HTMLDivElement | null>(null);
   const quillRef = useRef<Quill>(null);
+  const imageHandler = () => {
+    const input = document.createElement("input");
+    input.setAttribute("type", "file");
+    input.setAttribute("accept", "image/*");
+    input.click();
+    input.onchange = async () => {
+      const file = input.files?.[0];
+      if (file) {
+        const formData = new FormData();
+        formData.append("image", file);
+
+        try {
+          const { data } = await axios.post(
+            `${backend_url}/api/v1/blog/image-upload`,
+            formData,
+            {
+              headers: {
+                Authorization: `Bearer ${localStorage.getItem("token")}`,
+              },
+            }
+          );
+          if (data.success) {
+            const url = data.url;
+            const range = quillRef.current?.getSelection();
+            if (range && range.index !== undefined) {
+              quillRef.current?.insertEmbed(range.index, "image", url);
+            }
+          }
+        } catch (error: unknown) {
+          if (error instanceof AxiosError) {
+            toast.error(error.response?.data.message);
+            console.error(error);
+          }
+        }
+      }
+    };
+  };
   useEffect(() => {
     if (editorRef.current && !quillRef.current) {
       quillRef.current = new Quill(editorRef.current, {
         theme: "snow",
         modules: {
-          toolbar: [
-            [{ header: [1, 2, 3, false] }],
-            ["bold", "italic", "underline"],
-            [{ list: "ordered" }, { list: "bullet" }],
-            ["image", "link"],
-          ],
+          toolbar: {
+            conatiner: [
+              [{ header: [1, 2, 3, false] }],
+              ["bold", "italic", "underline"],
+              [{ list: "ordered" }, { list: "bullet" }],
+              ["image", "link"],
+            ],
+            handlers: {
+              image: imageHandler,
+            },
+          },
         },
       });
     }
