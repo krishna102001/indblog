@@ -69,9 +69,11 @@ const Navbar = () => {
             </div>
             {showLogout && (
               <div className='absolute mt-2 right-0 top-10 bg-white border border-cyan-400 shadow-lg rounded-lg p-2 '>
-                <p className='w-full p-1 text-sm text-red-500 hover:text-orange-500 border-b text-left m-1'>
-                  Your Blog
-                </p>
+                <Link to={`/your-blog/view/all/${userData.id}`}>
+                  <p className='w-full p-1 text-sm text-red-500 hover:text-orange-500 border-b text-left m-1'>
+                    Your Blog
+                  </p>
+                </Link>
                 <button
                   onClick={handleLogout}
                   className='w-full p-1 text-sm text-red-500 hover:text-orange-500  text-left m-1'
