@@ -10,7 +10,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "@krishnakantmaurya/indblog-common": "^1.0.1",
+    "@krishnakantmaurya/indblog-common": "^1.0.2",
     "@vercel/analytics": "^1.5.0",
     "axios": "^1.8.4",
     "dompurify": "^3.2.4",
