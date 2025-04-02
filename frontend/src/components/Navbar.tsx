@@ -35,14 +35,28 @@ const Navbar = () => {
           <div className=' flex items-center'>
             <div className='flex items-center mr-4 sm:mr-8 gap-4 sm:gap-8 font-light'>
               <Link to='/blogs'>
-                <p className='hover:underline hover:text-[#ff7002] cursor-pointer'>
-                  Read Blogs
-                </p>
+                <div className='flex gap-1 items-center justify-center'>
+                  <img
+                    src='/open-blog.png'
+                    alt='read-blog-logo'
+                    className='w-4 h-4'
+                  />
+                  <p className='hover:underline hover:text-[#ff7002] cursor-pointer'>
+                    Read Blogs
+                  </p>
+                </div>
               </Link>
               <Link to='/create/blog'>
-                <p className='hover:underline hover:text-[#ff7002] cursor-pointer'>
-                  Write
-                </p>
+                <div className='flex gap-1 items-center justify-center'>
+                  <img
+                    src='/write-blog.png'
+                    alt='read-blog-logo'
+                    className='w-4 h-4'
+                  />
+                  <p className='hover:underline hover:text-[#ff7002] cursor-pointer'>
+                    Write
+                  </p>
+                </div>
               </Link>
             </div>
             <div
