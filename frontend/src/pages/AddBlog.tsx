@@ -8,6 +8,7 @@ import { toast } from "react-toastify";
 
 const AddBlog = () => {
   const [blog, setBlog] = useState<blogCreateType>({ title: "", content: "" });
+  const [file, setFile] = useState<File | undefined>();
   const editorRef = useRef<HTMLDivElement | null>(null);
   const quillRef = useRef<Quill>(null);
   const imageHandler = () => {
@@ -53,11 +54,16 @@ const AddBlog = () => {
         theme: "snow",
         modules: {
           toolbar: {
-            conatiner: [
-              [{ header: [1, 2, 3, false] }],
-              ["bold", "italic", "underline"],
+            container: [
+              [{ font: [] }],
+              [{ header: [1, 2, 3, 4, 5, false] }],
+              ["bold", "italic", "underline", "strike"],
+              ["blockquote", "code-block"],
               [{ list: "ordered" }, { list: "bullet" }],
               ["image", "link"],
+              [{ color: [] }, { background: [] }],
+              [{ align: [] }],
+              ["clean"],
             ],
             handlers: {
               image: imageHandler,
@@ -71,16 +77,25 @@ const AddBlog = () => {
     e.preventDefault();
     try {
       const content = quillRef.current?.root.innerHTML;
+      const formData = new FormData();
+      formData.append("title", blog.title);
+      formData.append("content", content || "");
+      if (typeof file === "undefined") {
+        return;
+      }
+      formData.append("image", file);
       const { data } = await axios.post(
         `${backend_url}/api/v1/blog`,
-        { ...blog, content },
+        formData,
         {
           headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
         }
       );
+      // console.log(data);
       if (data.success) {
         toast.success("Blog Published Successfully");
         setBlog({ title: "", content: "" });
+        setFile(undefined);
         if (quillRef.current) {
           quillRef.current.root.innerHTML = "";
         }
@@ -109,6 +124,23 @@ const AddBlog = () => {
               className='bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5'
               value={blog?.title}
               onChange={(e) => setBlog({ ...blog, title: e.target.value })}
+              required
+            />
+            <label
+              className='block mb-2 text-sm font-medium text-gray-900 mt-4'
+              htmlFor='file_input'
+            >
+              Title Image
+            </label>
+            <input
+              className='block w-full text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50 focus:outline-none p-2.5'
+              id='file_input'
+              type='file'
+              onChange={(e) => {
+                if (e.target.files) {
+                  setFile(e.target?.files[0]);
+                }
+              }}
             />
             <div className='mb-6 w-full mt-4'>
               <label
