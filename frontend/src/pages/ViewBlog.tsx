@@ -16,6 +16,8 @@ interface Blogs {
   title: string;
   content: string;
   author: Author;
+  created_at: string;
+  image: string;
 }
 const ViewBlog = () => {
   const [blog, setBlog] = useState<Blogs>();
@@ -58,11 +60,18 @@ const ViewBlog = () => {
           {blog?.title}
         </h1>
         <div className='mb-4'>
-          <BlogProfile name={blog?.author.name || ""} />
+          <BlogProfile
+            name={blog?.author.name || ""}
+            created_at={blog?.created_at || ""}
+            timeRead={5}
+          />
+        </div>
+        <div className='flex flex-col justify-center items-center border-t'>
+          <img src={blog?.image} className='w-[50%] h-[50%] my-4' />
         </div>
         <div className='w-full max-w-full overflow-hidden'>
           <div
-            className='prose prose-lg max-w-full break-words'
+            className='prose prose-lg max-w-full break-words text-justify'
             style={{
               wordBreak: "break-word",
               overflowWrap: "break-word",
