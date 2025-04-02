@@ -33,7 +33,18 @@ const Navbar = () => {
       {userData ? (
         <div className='relative'>
           <div className=' flex items-center'>
-            <p className='mr-2'>Welcome {userData.name}</p>
+            <div className='flex items-center mr-4 sm:mr-8 gap-4 sm:gap-8 font-light'>
+              <Link to='/blogs'>
+                <p className='hover:underline hover:text-[#ff7002] cursor-pointer'>
+                  Read Blogs
+                </p>
+              </Link>
+              <Link to='/create/blog'>
+                <p className='hover:underline hover:text-[#ff7002] cursor-pointer'>
+                  Write
+                </p>
+              </Link>
+            </div>
             <div
               className='relative inline-flex items-center justify-center w-10 h-10 overflow-hidden bg-gray-300 rounded-full cursor-pointer '
               onClick={handleAvatarClick}
@@ -43,10 +54,13 @@ const Navbar = () => {
               </span>
             </div>
             {showLogout && (
-              <div className='absolute mt-2 right-0 top-10 bg-white border border-cyan-400 shadow-lg rounded-lg p-2'>
+              <div className='absolute mt-2 right-0 top-10 bg-white border border-cyan-400 shadow-lg rounded-lg p-2 '>
+                <p className='w-full p-1 text-sm text-red-500 hover:text-orange-500 border-b text-left m-1'>
+                  Your Blog
+                </p>
                 <button
                   onClick={handleLogout}
-                  className='w-full p-1 text-sm text-red-500 hover:bg-gray-200 rounded-md'
+                  className='w-full p-1 text-sm text-red-500 hover:text-orange-500  text-left m-1'
                 >
                   Logout
                 </button>
