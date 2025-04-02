@@ -22,12 +22,20 @@ model User {
 }
 
 model Post {
-  id         String    @id @default(uuid())
+  id         String      @id @default(uuid())
   title      String
   image      String?
   content    String
-  published  Boolean   @default(false)
-  created_at DateTime? @default(now())
-  author     User      @relation(fields: [authorId], references: [id])
+  published  Boolean     @default(false)
+  created_at DateTime?   @default(now())
+  author     User        @relation(fields: [authorId], references: [id])
   authorId   String
+  post_likes Post_Like[]
+}
+
+model Post_Like {
+  id     Int    @id @default(autoincrement())
+  like   Int
+  postId String
+  post   Post   @relation(fields: [postId], references: [id])
 }
