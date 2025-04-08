@@ -69,7 +69,7 @@ To Build IND BLOG we have used `React.js` for Frontend, `Hono.js` for Serverless
 7. Put your Secret also in `wrangler.jsonc` file.
 
    ````env
-   "DATABASE_URL":
+   "DATABASE_URL":"primsa accelerate pooling link should"
    "JWT_SECRET":
    "CLOUDINARY_API_KEY":
    "CLOUDINARY_API_SECRET":
